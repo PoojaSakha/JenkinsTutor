@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    stages {
+        stage('pre-build') {
+            steps {
+                sh 'echo Pre-build'
+            }
+        }
+        stage('build') {
+            steps {
+                script {
+                    env.BUILD_INFO = sh(script: 'echo Build in progress.', returnStdout: true).trim()
+                }
+            }
+        }
+        stage('Unit tests') {
+            steps {
+                script {
+                    env.UNIT_TEST_INFO = sh(script: 'echo Running unit tests', returnStdout: true).trim()
+                }
+            }
+        }
+        stage('deploy') {
+            steps {
+                script {
+                    env.DEPLOY_INFO = sh(script: 'echo Deploying build', returnStdout: true).trim()
+                }
+            }
+        }
+        stage('Regression tests') {
+            steps {
+                script {
+                    env.REGRESSION_TEST_INFO = sh(script: 'echo Running E2E tests', returnStdout: true).trim()
+                }
+            }
+        }
+        stage('Release to prod') {
+            steps {
+                script {
+                    env.RELEASE_INFO = sh(script: 'echo Releasing to prod', returnStdout: true).trim()
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                echo "Build Info: ${env.BUILD_INFO}"
+                echo "Unit Test Info: ${env.UNIT_TEST_INFO}"
+                echo "Deploy Info: ${env.DEPLOY_INFO}"
+                echo "Regression Test Info: ${env.REGRESSION_TEST_INFO}"
+                echo "Release Info: ${env.RELEASE_INFO}"
+                echo 'Cleanup after everything!'
+            }
+        }
+    }
+}
